@@ -1,18 +1,37 @@
 import * as React from "react"
-import { Link, graphql } from "gatsby"
-
+import {Link, graphql,PageProps} from 'gatsby'
 import Bio from "../components/bio"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
-const BlogIndex = ({ data, location }) => {
+type BlogProps = {
+  site: {
+    siteMetadata: {
+      title:string
+    }
+  }
+  allMarkdownRemark:{
+    nodes: {
+      excerpt:string;
+      fields: {
+        slug:string
+      }
+      frontmatter: {
+        date:string;
+        title:string;
+        description:string;
+      }
+    }
+  }
+}
+const BlogIndex:React.FC<PageProps<BlogProps>> = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata?.title || `Title`
-  const posts = data.allMarkdownRemark.nodes
-
+  const posts:any = data.allMarkdownRemark.nodes
+// console.log(posts)
   if (posts.length === 0) {
     return (
       <Layout location={location} title={siteTitle}>
-        <Seo title="All posts" />
+        <Seo title="All posts" description={""} lang={""} meta={""} />
         <Bio />
         <p>
           No blog posts found. Add markdown posts to "content/blog" (or the
@@ -25,12 +44,12 @@ const BlogIndex = ({ data, location }) => {
 
   return (
     <Layout location={location} title={siteTitle}>
-      <Seo title="All posts" />
+      <Seo title="All posts" description={""} lang={""} meta={""} />
       <Bio />
       <ol style={{ listStyle: `none` }}>
-        {posts.map(post => {
+        {posts.map((post: { frontmatter: { title: any; date: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; description: any }; fields: { slug: React.Key | null | undefined }; excerpt: any }) => {
           const title = post.frontmatter.title || post.fields.slug
-
+// console.log(post)
           return (
             <li key={post.fields.slug}>
               <article
@@ -40,7 +59,7 @@ const BlogIndex = ({ data, location }) => {
               >
                 <header>
                   <h2>
-                    <Link to={post.fields.slug} itemProp="url">
+                    <Link to={`${post.fields.slug}`} itemProp ="url">
                       <span itemProp="headline">{title}</span>
                     </Link>
                   </h2>
